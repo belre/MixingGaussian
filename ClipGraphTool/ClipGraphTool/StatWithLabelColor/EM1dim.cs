@@ -27,7 +27,7 @@ namespace ClipGraphTool.StatWithLabelColor
         {
             public int Number;
             public double Average;
-            public double Sigma;
+            public double Variation;
             public double MixingParameter;
         }
 
@@ -86,7 +86,7 @@ namespace ClipGraphTool.StatWithLabelColor
                 tmpdist[i] = new EMGaussian()
                 {
                     Average = ((DistResult.Length - 1 - i) * _areadata.Min() + i * _areadata.Max()) / (DistResult.Length - 1),
-                    Sigma = DefaultSigma,
+                    Variation = DefaultSigma,
                     MixingParameter = 1.0 / DistResult.Length
                 };
             }
@@ -95,12 +95,12 @@ namespace ClipGraphTool.StatWithLabelColor
             double[][] pdensity_gaussian = new double[DistResult.Length][];
             double[][] pdensity_ratio = new double[DistResult.Length][];
             double[][] pdensity_average = new double[DistResult.Length][];
-            double[][] pdensity_std = new double[DistResult.Length][];
+            double[][] pdensity_var = new double[DistResult.Length][];
             for( int i = 0 ; i < DistResult.Length; i ++ ) {
                 pdensity_gaussian[i] = new double[_areadata.Count];
                 pdensity_ratio[i] = new double[_areadata.Count];
                 pdensity_average[i] = new double[_areadata.Count];
-                pdensity_std[i] = new double[_areadata.Count];
+                pdensity_var[i] = new double[_areadata.Count];
             }
 
             // 反復演算
@@ -110,8 +110,8 @@ namespace ClipGraphTool.StatWithLabelColor
                 {
                     pdensity_gaussian[j] = _areadata.Select((val) =>
                         {
-                            double gaussval = Math.Exp(-(val - tmpdist[j].Average) * (val - tmpdist[j].Average) / (2 * tmpdist[j].Sigma * tmpdist[j].Sigma));
-                            gaussval /= Math.Sqrt(2 * Math.PI) * tmpdist[j].Sigma;
+                            double gaussval = Math.Exp(-(val - tmpdist[j].Average) * (val - tmpdist[j].Average) / (2 * tmpdist[j].Variation));
+                            gaussval /= Math.Sqrt(2 * Math.PI * tmpdist[j].Variation);
                             gaussval *= tmpdist[j].MixingParameter;
                             return gaussval;
                         }).ToArray();
@@ -130,7 +130,7 @@ namespace ClipGraphTool.StatWithLabelColor
                     {
                         pdensity_ratio[j][k] = pdensity_gaussian[j][k] / sumadd;
                         pdensity_average[j][k] = pdensity_ratio[j][k] * _areadata[k];
-                        pdensity_std[j][k] = pdensity_ratio[j][k] * (_areadata[k] - tmpdist[j].Average) * (_areadata[k] - tmpdist[j].Average); 
+                        pdensity_var[j][k] = pdensity_ratio[j][k] * (_areadata[k] - tmpdist[j].Average) * (_areadata[k] - tmpdist[j].Average); 
                     }
                 }
 
@@ -139,7 +139,7 @@ namespace ClipGraphTool.StatWithLabelColor
                 for( int j = 0 ; j < pdensity_gaussian.Length; j ++ ) {
                     DistResult[j].MixingParameter = pdensity_ratio[j].Sum() / _areadata.Count;
                     DistResult[j].Average = pdensity_average[j].Sum() / pdensity_ratio[j].Sum();
-                    DistResult[j].Sigma = pdensity_std[j].Sum() / pdensity_ratio[j].Sum();
+                    DistResult[j].Variation = pdensity_var[j].Sum() / pdensity_ratio[j].Sum();
 
                     DistResult[j].Number = (int)Math.Round(DistResult[j].MixingParameter * _areadata.Count);
                 }

@@ -414,8 +414,8 @@ namespace ClipGraphTool
             {
                 outnum = 0;
             }
-            else if (algo.DistResult[0].Average < algo.DistResult[1].Average + 3 * algo.DistResult[1].Sigma &&
-                algo.DistResult[0].Average > algo.DistResult[1].Average - 3 * algo.DistResult[1].Sigma)
+            else if (algo.DistResult[0].Average < algo.DistResult[1].Average + 3 * algo.DistResult[1].Variation &&
+                algo.DistResult[0].Average > algo.DistResult[1].Average - 3 * algo.DistResult[1].Variation)
             {
                 outnum = 1;
             }
@@ -430,7 +430,7 @@ namespace ClipGraphTool
             }
             for (int i = 0; i < outnum; i++)
             {
-                dataset_viewed.Tables["StatTable"].Rows.Add(new object[] { string.Format("粒子{0}-6σ", i + 1), string.Format("{0:F2}", algo.DistResult[i].Sigma * 6) });
+                dataset_viewed.Tables["StatTable"].Rows.Add(new object[] { string.Format("粒子{0}-6σ", i + 1), string.Format("{0:F2}", Math.Sqrt(algo.DistResult[i].Variation) * 6) });
             }
         }
 
