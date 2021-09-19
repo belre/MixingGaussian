@@ -9,13 +9,11 @@ namespace ClipGraphTool.StatWithLabelColor
     /// <summary>
     /// 1次元のEMアルゴリズム.
     /// ・1次元で正規分布なのもほぼ明らかなので、演算精度には問題ないはず
-    /// ・C#は処理時間がかかるが、今回の場合はたいして問題にならない
-    /// ・2要素限定に設定
+    /// ・LINQを使って処理時間減らす
     /// </summary>
     public class EM1dim
     {
-        private readonly int ITERATION_COUNT = 10;
-        private readonly int DIMENSION = 2;
+        private readonly int ITERATION_COUNT = 100;
 
         public double DefaultSigma
         {
@@ -39,19 +37,25 @@ namespace ClipGraphTool.StatWithLabelColor
             private set;
         }
 
+        public int Dimension
+        {
+            get;
+            set;
+        }
 
         public EM1dim(List<DataStructure> data)
         {
             _data = new List<DataStructure>();
             _data.AddRange(data);
 
-            DistResult = new EMGaussian[DIMENSION];
-            for (int i = 0; i < DIMENSION; i++)
+            DistResult = new EMGaussian[Dimension];
+            for (int i = 0; i < Dimension; i++)
             {
                 DistResult[i] = new EMGaussian();
             }
 
             DefaultSigma = 0.1;
+            Dimension = 2;
         }
 
         /// <summary>
@@ -66,8 +70,8 @@ namespace ClipGraphTool.StatWithLabelColor
             }
             else
             {
-                DistResult = new EMGaussian[DIMENSION];
-                for (int i = 0; i < DIMENSION; i++)
+                DistResult = new EMGaussian[Dimension];
+                for (int i = 0; i < Dimension; i++)
                 {
                     DistResult[i] = new EMGaussian();
                 }
