@@ -136,7 +136,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /e /i $(ProjectDir)\export $(TargetDir)\export</PostBuildEvent>
+    <PostBuildEvent>xcopy /e /i /y $(ProjectDir)\export $(TargetDir)\export</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

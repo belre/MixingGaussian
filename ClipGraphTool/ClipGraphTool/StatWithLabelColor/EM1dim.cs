@@ -110,7 +110,7 @@ namespace ClipGraphTool.StatWithLabelColor
                 {
                     pdensity_gaussian[j] = _areadata.Select((val) =>
                         {
-                            double gaussval = Math.Exp(- (val - tmpdist[j].Average) * (val - tmpdist[j].Average) / (2 * tmpdist[j].Sigma));
+                            double gaussval = Math.Exp(-(val - tmpdist[j].Average) * (val - tmpdist[j].Average) / (2 * tmpdist[j].Sigma * tmpdist[j].Sigma));
                             gaussval /= Math.Sqrt(2 * Math.PI) * tmpdist[j].Sigma;
                             gaussval *= tmpdist[j].MixingParameter;
                             return gaussval;
